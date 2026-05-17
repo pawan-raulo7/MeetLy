@@ -1,17 +1,65 @@
-const { Sequelize } = require("sequelize");
+const { Sequelize } =
+    require("sequelize");
+
 require("dotenv").config();
 
-const sequelize = new Sequelize(
-    process.env.DB_NAME,
-    process.env.DB_USER,
-    process.env.DB_PASSWORD,
-    {
-        host: process.env.DB_HOST,
-        dialect: "mysql",
-        logging: process.env.NODE_ENV === "development" ? console.log : false,
-    }
-);
+let sequelize;
 
-// The connection is already tested/synced in server.js via `sequelize.sync()`.
+/* =========================================
+   PRODUCTION DATABASE
+========================================= */
 
-module.exports = sequelize;
+if (
+    process.env.NODE_ENV ===
+    "production"
+) {
+
+    sequelize =
+        new Sequelize(
+            process.env.MYSQL_PUBLIC_URL,
+            {
+
+                dialect: "mysql",
+
+                protocol: "mysql",
+
+                logging: false,
+            }
+        );
+
+} else {
+
+    /* =========================================
+       LOCAL DATABASE
+    ========================================= */
+
+    sequelize =
+        new Sequelize(
+
+            process.env.DB_NAME,
+
+            process.env.DB_USER,
+
+            process.env.DB_PASSWORD,
+
+            {
+
+                host:
+                    process.env.DB_HOST,
+
+                dialect:
+                    "mysql",
+
+                logging:
+                    process.env.NODE_ENV ===
+                        "development"
+
+                        ? console.log
+
+                        : false,
+            }
+        );
+}
+
+module.exports =
+    sequelize;
